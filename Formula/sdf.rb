@@ -62,14 +62,14 @@ class Sdf < Formula
       # Bash completion
       bash_completion_dir = Pathname.new(HOMEBREW_PREFIX) / "etc/bash_completion.d"
       if (bin/"sdf").exist? && bash_completion_dir.directory?
-        (bash_completion_dir/"sdf").write <<~BASH
+        (bash_completion_dir/"sdf").write <<~'BASH'
           # sdf bash completion — generated
           _sdf_completion() {
             local commands="inspect validate convert wrap keygen sign verify schema"
             local schema_cmds="list versions diff validate"
             local cur="${COMP_WORDS[COMP_CWORD]}"
             local prev="${COMP_WORDS[COMP_CWORD-1]}"
-  
+
             case "$prev" in
               sdf) COMPREPLY=($(compgen -W "$commands --help --version" -- "$cur")) ;;
               schema) COMPREPLY=($(compgen -W "$schema_cmds" -- "$cur")) ;;
