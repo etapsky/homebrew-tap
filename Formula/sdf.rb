@@ -27,12 +27,12 @@ class Sdf < Formula
     on_macos do
       on_arm do
         url "https://github.com/etapsky/sdf/releases/download/sdf-cli-v#{version}/sdf-macos-arm64.tar.gz"
-        sha256 "REPLACE_AFTER_FIRST_RELEASE_macos_arm64"
+        sha256 "c95999c73350055d3267edb31db96330ca3436f57239599e066c3db02318f930"
       end
   
       on_intel do
         url "https://github.com/etapsky/sdf/releases/download/sdf-cli-v#{version}/sdf-macos-x64.tar.gz"
-        sha256 "REPLACE_AFTER_FIRST_RELEASE_macos_x64"
+        sha256 "5c076c6440c533927becfefabff96e0c3824eb6e1980d8333d4a8db94ea58dfa"
       end
     end
   
@@ -40,12 +40,12 @@ class Sdf < Formula
       on_arm do
         cpu :arm
         url "https://github.com/etapsky/sdf/releases/download/sdf-cli-v#{version}/sdf-linux-arm64.tar.gz"
-        sha256 "REPLACE_AFTER_FIRST_RELEASE_linux_arm64"
+        sha256 "1a9aecaf4fe6efba6791b53da0b56043a3c1b6075cc480be7c19ea5d5d2efac2"
       end
   
       on_intel do
         url "https://github.com/etapsky/sdf/releases/download/sdf-cli-v#{version}/sdf-linux-x64.tar.gz"
-        sha256 "REPLACE_AFTER_FIRST_RELEASE_linux_x64"
+        sha256 "e4ba5c3f88a034e8b8f1ea71c062078fa19944c469f453cd65c4e08e3ad64a1c"
       end
     end
   
