@@ -1,0 +1,10 @@
+# macOS
+.DS_Store
+
+# Ruby
+*.gem
+*.rbc
+.bundle/
+
+# Homebrew audit artifacts
+.brew_cache/
