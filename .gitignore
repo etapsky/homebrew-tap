@@ -8,3 +8,5 @@
 
 # Homebrew audit artifacts
 .brew_cache/
+me/
+references/
