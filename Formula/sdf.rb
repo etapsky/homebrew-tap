@@ -115,6 +115,7 @@ class Sdf < Formula
 
       # Dummy executable — macOS only checks it exists and is executable
       exe = bundle/"Contents/MacOS/SDFFileType"
+      exe.unlink if exe.exist?
       exe.write("#!/bin/sh\n")
       exe.chmod(0755)
 
@@ -122,7 +123,9 @@ class Sdf < Formula
       FileUtils.cp(icns_src, bundle/"Contents/Resources/SDFDocument.icns")
 
       # Info.plist — declares com.etapsky.sdf UTI and associates the icon
-      (bundle/"Contents/Info.plist").write <<~XML
+      plist = bundle/"Contents/Info.plist"
+      plist.unlink if plist.exist?
+      plist.write <<~XML
         <?xml version="1.0" encoding="UTF-8"?>
         <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
           "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
