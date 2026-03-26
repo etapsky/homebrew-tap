@@ -59,147 +59,45 @@ class Sdf < Formula
       (pkgshare/"icons").install "SDFDocument.icns" if File.exist?("SDFDocument.icns")
     end
 
-    # ── Shell completions + macOS file type registration ─────────────────────────
+    # ── Shell completions ─────────────────────────────────────────────────────────
 
     def post_install
-      # Bash completion
       bash_completion_dir = Pathname.new(HOMEBREW_PREFIX) / "etc/bash_completion.d"
-      if (bin/"sdf").exist? && bash_completion_dir.directory?
-        completion_file = bash_completion_dir/"sdf"
-        completion_file.unlink if completion_file.exist?
-        completion_file.write <<~'BASH'
-          # sdf bash completion — generated
-          _sdf_completion() {
-            local commands="inspect validate convert wrap keygen sign verify schema"
-            local schema_cmds="list versions diff validate"
-            local cur="${COMP_WORDS[COMP_CWORD]}"
-            local prev="${COMP_WORDS[COMP_CWORD-1]}"
+      return unless (bin/"sdf").exist? && bash_completion_dir.directory?
 
-            case "$prev" in
-              sdf) COMPREPLY=($(compgen -W "$commands --help --version" -- "$cur")) ;;
-              schema) COMPREPLY=($(compgen -W "$schema_cmds" -- "$cur")) ;;
-              inspect|validate) COMPREPLY=($(compgen -f -X "!*.sdf" -- "$cur")) ;;
-              --data|--schema|--key) COMPREPLY=($(compgen -f -- "$cur")) ;;
-              --out) COMPREPLY=($(compgen -f -- "$cur")) ;;
-              *) COMPREPLY=() ;;
-            esac
-          }
-          complete -F _sdf_completion sdf
-        BASH
-      end
+      completion_file = bash_completion_dir/"sdf"
+      completion_file.unlink if completion_file.exist?
+      completion_file.write <<~'BASH'
+        # sdf bash completion — generated
+        _sdf_completion() {
+          local commands="inspect validate convert wrap keygen sign verify schema"
+          local schema_cmds="list versions diff validate"
+          local cur="${COMP_WORDS[COMP_CWORD]}"
+          local prev="${COMP_WORDS[COMP_CWORD-1]}"
 
-      # macOS: register .sdf file type icon with Launch Services
-      # Requires SDFDocument.icns to be present (included in tarball from v0.4.0+)
-      if OS.mac?
-        icns_src = pkgshare/"icons/SDFDocument.icns"
-        if icns_src.exist?
-          sdf_register_icon(icns_src.to_s)
-        end
-      end
+          case "$prev" in
+            sdf) COMPREPLY=($(compgen -W "$commands --help --version" -- "$cur")) ;;
+            schema) COMPREPLY=($(compgen -W "$schema_cmds" -- "$cur")) ;;
+            inspect|validate) COMPREPLY=($(compgen -f -X "!*.sdf" -- "$cur")) ;;
+            --data|--schema|--key) COMPREPLY=($(compgen -f -- "$cur")) ;;
+            --out) COMPREPLY=($(compgen -f -- "$cur")) ;;
+            *) COMPREPLY=() ;;
+          esac
+        }
+        complete -F _sdf_completion sdf
+      BASH
     end
 
-    private
+    # ── macOS file type icon (caveats) ────────────────────────────────────────────
 
-    # Creates a minimal .app bundle and registers it with macOS Launch Services
-    # so that .sdf files display the SDF icon in Finder.
-    def sdf_register_icon(icns_src)
-      bundle = Pathname.new(Dir.home)/"Library/SDFFileType.app"
-      lsreg  = "/System/Library/Frameworks/CoreServices.framework/Versions/A/" \
-               "Frameworks/LaunchServices.framework/Versions/A/Support/lsregister"
+    def caveats
+      return unless OS.mac?
+      return unless (pkgshare/"icons/SDFDocument.icns").exist?
 
-      return unless File.exist?(lsreg)
-
-      # Remove stale bundle from previous installs (avoids write/chmod permission errors)
-      bundle.rmtree if bundle.exist?
-
-      # Build minimal bundle structure
-      (bundle/"Contents/MacOS").mkpath
-      (bundle/"Contents/Resources").mkpath
-
-      # Dummy executable — macOS only checks it exists and is executable
-      exe = bundle/"Contents/MacOS/SDFFileType"
-      exe.write("#!/bin/sh\n")
-      exe.chmod(0755)
-
-      # Icon
-      FileUtils.cp(icns_src, bundle/"Contents/Resources/SDFDocument.icns")
-
-      # Info.plist — declares com.etapsky.sdf UTI and associates the icon
-      (bundle/"Contents/Info.plist").write <<~XML
-        <?xml version="1.0" encoding="UTF-8"?>
-        <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
-          "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-        <plist version="1.0">
-        <dict>
-          <key>CFBundleIdentifier</key>
-          <string>com.etapsky.sdf-filetype</string>
-          <key>CFBundleName</key>
-          <string>SDF File Type</string>
-          <key>CFBundleExecutable</key>
-          <string>SDFFileType</string>
-          <key>CFBundleShortVersionString</key>
-          <string>#{version}</string>
-          <key>CFBundleVersion</key>
-          <string>1</string>
-          <key>CFBundlePackageType</key>
-          <string>APPL</string>
-          <key>LSUIElement</key>
-          <true/>
-          <key>CFBundleDocumentTypes</key>
-          <array>
-            <dict>
-              <key>CFBundleTypeExtensions</key>
-              <array><string>sdf</string></array>
-              <key>CFBundleTypeMIMETypes</key>
-              <array><string>application/vnd.sdf</string></array>
-              <key>CFBundleTypeName</key>
-              <string>Smart Document Format</string>
-              <key>CFBundleTypeIconFile</key>
-              <string>SDFDocument</string>
-              <key>CFBundleTypeRole</key>
-              <string>Viewer</string>
-              <key>LSTypeIsPackage</key>
-              <false/>
-            </dict>
-          </array>
-          <key>UTExportedTypeDeclarations</key>
-          <array>
-            <dict>
-              <key>UTTypeIdentifier</key>
-              <string>com.etapsky.sdf</string>
-              <key>UTTypeDescription</key>
-              <string>Smart Document Format</string>
-              <key>UTTypeConformsTo</key>
-              <array>
-                <string>public.data</string>
-                <string>public.archive</string>
-              </array>
-              <key>UTTypeTagSpecification</key>
-              <dict>
-                <key>public.filename-extension</key>
-                <array><string>sdf</string></array>
-                <key>public.mime-type</key>
-                <array><string>application/vnd.sdf</string></array>
-              </dict>
-              <key>UTTypeIconFile</key>
-              <string>SDFDocument</string>
-            </dict>
-          </array>
-        </dict>
-        </plist>
-      XML
-
-      # Register with Launch Services
-      system lsreg, "-f", bundle.to_s
-
-      # Flush icon cache
-      icon_cache = Pathname.new(Dir.home)/"Library/Caches/com.apple.iconservices.store"
-      icon_cache.rmtree if icon_cache.exist?
-
-      # Restart Finder to pick up the new icon
-      system "killall", "Finder"
-    rescue => e
-      opoo "SDF icon registration failed: #{e.message}"
+      <<~EOS
+        To register the .sdf file type icon in Finder, run once:
+          sdf --register-icons
+      EOS
     end
   
     # ── Test ─────────────────────────────────────────────────────────────────────
