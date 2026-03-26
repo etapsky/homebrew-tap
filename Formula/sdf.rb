@@ -65,7 +65,9 @@ class Sdf < Formula
       # Bash completion
       bash_completion_dir = Pathname.new(HOMEBREW_PREFIX) / "etc/bash_completion.d"
       if (bin/"sdf").exist? && bash_completion_dir.directory?
-        (bash_completion_dir/"sdf").write <<~'BASH'
+        completion_file = bash_completion_dir/"sdf"
+        completion_file.unlink if completion_file.exist?
+        completion_file.write <<~'BASH'
           # sdf bash completion — generated
           _sdf_completion() {
             local commands="inspect validate convert wrap keygen sign verify schema"
