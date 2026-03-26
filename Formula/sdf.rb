@@ -17,7 +17,7 @@
 class Sdf < Formula
     desc     "SDF (Smart Document Format) CLI — inspect, validate, convert, sign .sdf files"
     homepage "https://github.com/etapsky/sdf"
-    version  "0.3.0"
+    version  "0.3.1"
     license  "BUSL-1.1"
   
     # ── Platform-specific binary downloads ──────────────────────────────────────
@@ -27,12 +27,12 @@ class Sdf < Formula
     on_macos do
       on_arm do
         url "https://github.com/etapsky/sdf/releases/download/sdf-cli-v#{version}/sdf-macos-arm64.tar.gz"
-        sha256 "c95999c73350055d3267edb31db96330ca3436f57239599e066c3db02318f930"
+        sha256 "6768a135ecd1cd8dc05f55ad91115929e3a28480951f370d241f0233f59d9220"
       end
   
       on_intel do
         url "https://github.com/etapsky/sdf/releases/download/sdf-cli-v#{version}/sdf-macos-x64.tar.gz"
-        sha256 "5c076c6440c533927becfefabff96e0c3824eb6e1980d8333d4a8db94ea58dfa"
+        sha256 "14fc5fb55170e8c43ced7393d3dc452a640fe77cd6bc6a62842cf3d4b4c61856"
       end
     end
   
@@ -40,12 +40,12 @@ class Sdf < Formula
       on_arm do
         cpu :arm
         url "https://github.com/etapsky/sdf/releases/download/sdf-cli-v#{version}/sdf-linux-arm64.tar.gz"
-        sha256 "1a9aecaf4fe6efba6791b53da0b56043a3c1b6075cc480be7c19ea5d5d2efac2"
+        sha256 "1e300b4d73d520672fdd8c6dd5b398656ce18e6efe1ded16c0ffae85a1a3592d"
       end
   
       on_intel do
         url "https://github.com/etapsky/sdf/releases/download/sdf-cli-v#{version}/sdf-linux-x64.tar.gz"
-        sha256 "e4ba5c3f88a034e8b8f1ea71c062078fa19944c469f453cd65c4e08e3ad64a1c"
+        sha256 "b0077bb9a805321b953bab81fa2d97be88f033cacf7f007a5f52d45158b9c6d7"
       end
     end
   
